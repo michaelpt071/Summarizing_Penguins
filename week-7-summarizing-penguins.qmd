@@ -321,13 +321,13 @@ penguins |>
 We can combine `count()` with `mutate()` to find proportions and the visualize them - comment the following code:
 ```{r}
 penguins |> 
-  count(species, island) |> #comment
-  group_by(species) |> #comment 
-  mutate(total = sum(n),  #comment
-         prop = n/total) |>  #comment
-  ggplot(aes(x = island, y = prop, fill = species)) + #comment
-  geom_col(position = position_dodge()) + #comment
-  scale_fill_viridis_d() + #comment
+  count(species, island) |> #counts n seperated by species and island
+  group_by(species) |> #groups by species 
+  mutate(total = sum(n),  #adds new column called total, defined as sum of n grouped by species
+         prop = n/total) |>  #adds new column called prop, defined as n/total
+  ggplot(aes(x = island, y = prop, fill = species)) + #begins ggplot, defines universal aesthetics
+  geom_col(position = position_dodge()) + #defines first geometry for ggplot
+  scale_fill_viridis_d() + #sets fill color based on species
   labs(x = "Palmer Islands",
        y = "Proportion of Penguin Species per Island",
        fill = "Species") +
@@ -376,12 +376,12 @@ Identify what is going on in this code:
 
 ```{r}
 penguins |>
-  select(species, year, flipper_length_mm) |>  #comment
-  rename(study_year = year) |>   #comment
-  filter(species == "Adelie") |>  #comment
-  mutate(flipper_rank = case_when(   #comment
-    flipper_length_mm < 200 ~ 1,   #comment
-    flipper_length_mm >= 200 ~ 2,  #comment
+  select(species, year, flipper_length_mm) |>  #selects the necessary columns
+  rename(study_year = year) |>   #renames study_year column
+  filter(species == "Adelie") |>  #selects only rows where species is Adelie
+  mutate(flipper_rank = case_when(   #adds new column, begins case statement
+    flipper_length_mm < 200 ~ 1,   #sets value to 1 if flipper_length_mm < 200
+    flipper_length_mm >= 200 ~ 2,  #sets value to 2 if flipper_length_mm >= 200
     TRUE ~ 0 # 0 for anything else
   ))
 ```
