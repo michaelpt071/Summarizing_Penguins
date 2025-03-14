@@ -170,7 +170,12 @@ penguins |>
 Starting with penguins, create a summary table containing the maximum and minimum length of flippers (call the columns flip_max and flip_min) for just Chinstrap penguins, grouped by island. (Hint - remember `filter()`)
 
 ```{r}
-
+penguins %>% 
+  filter(species == "Chinstrap") %>% 
+  group_by(island) %>% 
+  mutate(flip_max = max(flipper_length_mm),
+         flip_min = min(flipper_length_mm)) %>% 
+  distinct(species, flip_max, flip_min)
 ```
 
 
@@ -183,7 +188,11 @@ Starting with penguins, in a piped sequence:
 - Create a summary table containing the mean of the bill_ratio variable, by species (name the column in the summary table bill_ratio_mean)  
 
 ```{r}
-
+penguins %>% 
+  select(species, bill_ratio) %>% 
+  group_by(species) %>% 
+  drop_na(bill_ratio) %>% 
+  summarise(mean(bill_ratio))
 ```
 
 
@@ -257,7 +266,12 @@ Starting with penguins, group data by island then use `across()` to find the med
 Bonus Point: The names in the resulting table should be the original column name followed by an underscore, then the word “median” (e.g. `colname_median`).
 
 ```{r}
-
+penguins %>% 
+  group_by(island) %>% 
+  summarize(across(contains("mm"),
+         list(median = median),
+         na.rm = TRUE,
+         .names = "{.col}_median"))
 ```
 
 Starting from penguins, write a piped sequence to:  
@@ -268,7 +282,15 @@ Starting from penguins, write a piped sequence to:
 - Group the data by `spp_penguin`  
 - Find the mean value for any variable containing the string “length”, by penguin species, with column names updated to the original column name appended with "_mean" at the end  
 ```{r}
-
+penguins %>% 
+  filter(island != "Biscoe") %>% 
+  select(1:6) %>% 
+  rename(spp_penguin = species) %>% 
+  group_by(spp_penguin) %>% 
+  summarize(across(contains("length"),
+         list(avg = mean),
+         na.rm = TRUE,
+         .names = "{.col}_mean"))
 ```
 
 
@@ -315,13 +337,17 @@ penguins |>
 ### Practice with `count()`
 Starting with penguins, find counts of observation by species, island, and year.
 ```{r}
-
+penguins %>% 
+  count(species, island, year)
 ```
 
 
 Starting with penguins, filter to only keep Adelie and Gentoo penguins, then find counts by species and sex.
 ```{r}
-
+penguins %>% 
+  filter(species != "Chinstrap") %>% 
+  drop_na(sex) %>% 
+  count(species, sex)
 ```
 
 
@@ -368,14 +394,26 @@ Add a new column to penguins called study_year that contains:
 - “Year 3” if the year is 2009 
 
 ```{r}
-
+penguins %>% 
+  mutate(study_year = case_when(
+    year == "2007" ~ "Year 1",
+    year == "2008" ~ "Year 2",
+    year == "2009" ~ "Year 3"
+  ))
 ```
 
 
 Starting with penguins, only keep observations for chinstrap penguins, then only keep the `flipper_length_mm` and `body_mass_g` variables. Add a new column called `fm_ratio` that contains the ratio of flipper length to body mass for each penguin. Next, add another column named `ratio_bin` which contains the word “high” if `fm_ratio` is greater than or equal to 0.05, “low” if the ratio is less than 0.05, and “no record” if anything else (e.g. NA). 
 
 ```{r}
-
+penguins %>% 
+  filter(species == "Chinstrap") %>% 
+  select(flipper_length_mm, body_mass_g) %>% 
+  mutate(fm_ratio = (flipper_length_mm/body_mass_g)) %>% 
+  mutate(ratio_bin = case_when(
+    fm_ratio >= 0.05 ~ "high",
+    fm_ratio < 0.05 ~ "low"
+  ))
 ```
 
 
