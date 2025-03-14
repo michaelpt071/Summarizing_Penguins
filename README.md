@@ -1,4 +1,6 @@
 # Summarizing_Penguins
 Week 8 In-Class Activity
-completed first half
-completed full assignment
+
+1. completed first half
+
+2. completed full assignment
